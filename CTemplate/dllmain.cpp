@@ -9,6 +9,9 @@
 #include "Common.h"
 #include "winhooks.h"
 #include "ExampleHooks.h"
+#include "d3hook.h"
+#include "kiero/kiero.h"
+#include "RecvHook.h"
 
 // BE AWARE ===v
 // in order to fix the detours.lib link error you need to replace
@@ -23,7 +26,7 @@ VOID MainFunc()
 	Log(__FUNCTION__);
 
 	// set hooks
-
+	MapleHooks::PacketRecvHook();
 	return;
 
 	// below hooks only serve as examples -- they will not do anything as-is
@@ -68,7 +71,7 @@ VOID MainProc()
 		TRUE,			// true if you want to hook windows libraries (besides mutex)
 						//		set this to false if you already edited your IP into the client (eg v83 localhosts)
 		&MainFunc,		// function to be executed after client is unpacked
-		"127.0.0.1",	// IP to connec to (your server IP)
+		"127.0.0.1",	// IP to connect to (your server IP)
 		"127.0.0.1");	// IP to redirect from (nexon IP)
 }
 
@@ -80,15 +83,16 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
 	case DLL_PROCESS_ATTACH:
 	{
 		Log("DLL_PROCESS_ATTACH");
-
 		DisableThreadLibraryCalls(hModule);
 		CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)&MainProc, NULL, 0, 0);
+		CreateThread(nullptr, 0, D3::Thread, hModule, 0, nullptr);
 		break;
 	}
 	case DLL_PROCESS_DETACH:
 	{
 		Log("DLL_PROCESS_DETACH");
 		CommonHooks->~Common();
+		kiero::shutdown();
 		break;
 	}
 	}

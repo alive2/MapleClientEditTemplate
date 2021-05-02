@@ -69,6 +69,9 @@
     <ClInclude Include="FakeModule.h">
       <Filter>FakeModule</Filter>
     </ClInclude>
+    <ClInclude Include="MaplePacket.h">
+      <Filter>Header Files\MapleTypes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="detours.lib">
